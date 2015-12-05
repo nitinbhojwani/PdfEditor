@@ -12,13 +12,13 @@ class PdfEditor(object):
     Origin is on LOWER left corner.
     '''
 
-    def __init__(self, filename, pageSize):
+    def __init__(self, filepath, pageSize):
         '''Args:
-            filename (str): Location of the original PDF.
+            filepath (str): Location of the original PDF.
             pageSize (str): Either letter or legal.
         '''
         super(PdfEditor, self).__init__()
-        self.pdf = PdfFileReader(filename).getPage(0)
+        self.pdf = PdfFileReader(file(filepath, 'rb')).getPage(0)
         self.content = StringIO.StringIO()
         self.parser = canvas.Canvas(self.content, pagesize=(letter if pageSize == 'letter' else legal))
 
@@ -36,9 +36,9 @@ class PdfEditor(object):
         '''
         self.parser.setFontSize(int(size))
 
-    def save(self, filename):
+    def save(self, filepath):
         '''Args:
-            filename (str): Name of the file to be saved.
+            filepath (str): Name of the file to be saved.
         '''
         self.parser.save()
         self.content.seek(0)
@@ -46,5 +46,5 @@ class PdfEditor(object):
         output = PdfFileWriter()
         self.pdf.mergePage(text.getPage(0))
         output.addPage(self.pdf)
-        outputStream = open(filename, 'wb')
+        outputStream = open(filepath, 'wb')
         output.write(outputStream)
